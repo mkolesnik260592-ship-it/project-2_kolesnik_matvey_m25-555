@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "project-2-kolesnik-matvey-m25-555"
+version = "0.1.0"
+description = "Primitive DB project"
+authors = ["Matthew <mkolesnik260592@gmail.com>"]
+readme = "README.md"
+packages = [
+    { include = "src" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+project = "src.primitive_db.main:main"
