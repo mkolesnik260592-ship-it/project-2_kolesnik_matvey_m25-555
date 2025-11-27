@@ -20,4 +20,4 @@ run:
 	poetry run python -m src.primitive_db.main
 
 lint:
-    poetry run ruff check
+	poetry run ruff check

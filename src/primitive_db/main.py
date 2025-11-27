@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Точка входа для Primitive DB."""
 
-from src.primitive_db.engine import welcome
+from src.primitive_db.engine import run
 
 
 def main():
     """Главная функция запуска приложения."""
-    welcome()
+    run()
 
 
 if __name__ == "__main__":
