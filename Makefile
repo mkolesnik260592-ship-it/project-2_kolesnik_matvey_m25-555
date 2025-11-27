@@ -11,7 +11,7 @@ publish:
 	poetry publish --dry-run
 
 package-install:
-	poetry run python3 -m pip install dist/*.whl
+	poetry run python3 -m pip install dist/*.whl --force-reinstall
 
 prompt:
 	poetry add prompt
@@ -21,3 +21,6 @@ run:
 
 lint:
 	poetry run ruff check
+
+database:
+	poetry run database

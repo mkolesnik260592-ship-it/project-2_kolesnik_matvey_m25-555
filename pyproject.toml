@@ -5,7 +5,7 @@ description = "Primitive DB project"
 authors = ["Matthew <mkolesnik260592@gmail.com>"]
 readme = "README.md"
 packages = [
-    { include = "src" },
+    { include = "primitive_db", from = "src" },
 ]
 
 [tool.poetry.dependencies]
@@ -15,13 +15,12 @@ prompt = "^0.4.1"
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.14.6"
 
+[tool.poetry.scripts]
+database = "primitive_db.main:main"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.poetry.scripts]
-project = "src.primitive_db.main:main"
-database = "primitive_db.main:main"
 
 [tool.ruff]
 line-length = 88
