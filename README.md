@@ -1,20 +1,21 @@
 # Primitive DB
 
-Простая интерактивная база данных на Python с командной строкой для управления таблицами.
+Простая интерактивная база данных на Python с поддержкой CRUD операций и SQL-подобным синтаксисом команд.
 
 ## Описание
 
-Primitive DB — это учебный проект CLI-приложения для управления таблицами, демонстрирующий:
+Primitive DB — это учебный проект CLI-приложения для управления таблицами и данными, демонстрирующий:
 
 - Создание Python-пакетов с Poetry
 - Интерактивный CLI с библиотекой `prompt`
-- Работу с JSON для хранения метаданных
-- Организацию кода в модули (OOP, парсинг команд)
-- Публикацию пакетов
+- Работу с JSON для хранения метаданных и данных
+- Организацию кода в модули (OOP, парсинг команд, CRUD операции)
+- Типизацию и валидацию данных
+- SQL-подобный синтаксис команд
 
 ## Установка
 
-### Требовани
+### Требования
 
 - Python 3.10+
 - Poetry
@@ -40,19 +41,25 @@ poetry run python -m src.primitive_db.main
 make run
 
 Запуск установленного пакета
-database
+primitive-db
 
+Команды
 Управление таблицами
-Список команд
-Команда #Описание
-create_table <имя> <столбец:тип> ... #Создать новую таблицу
-list_tables #Показать все таблицы
-drop_table <имя> #Удалить таблицу
-help #Показать справку
-exit #Выйти из программы
-
+Команда	Описание
+create_table <имя> <столбец:тип> ...	Создать новую таблицу
+list_tables	Показать все таблицы
+drop_table <имя>	Удалить таблицу
+CRUD операции
+Команда	Описание
+insert into <таблица> values (...)	Добавить запись
+select from <таблица> [where ...]	Выбрать записи
+update <таблица> set <столбец = значение> [where ...]	Обновить записи
+delete from <таблица> [where ...]	Удалить записи
+Общие команды
+Команда	Описание
+help	Показать справку
+exit	Выйти из программы
 Подробное описание команд
-
 1. create_table — Создание таблицы
 Синтаксис:
 
@@ -68,31 +75,13 @@ str — строки
 bool — логические значения
 Примеры:
 
-# Создать таблицу пользователей
-create_table users name:str age:int
-# Создать таблицу товаров
+create_table users name:str age:int active:bool
 create_table products title:str price:int available:bool
-# Создать таблицу заказов
 create_table orders user_id:int product_id:int quantity:int
 
 Успешный результат:
 
 Таблица "users" создана
-
-Ошибки:
-
-Таблица уже существует:
-create_table users email:str
-Ошибка: таблица "users" уже существует
-
-Недопустимый тип данных:
-create_table test price:float
-Ошибка: недопустимый тип "float"
-
-Недостаточно аргументов:
-create_table users
-Ошибка: недостаточно аргументов
-Использование: create_table <имя> <столбец:тип> ...
 
 2. list_tables — Список таблиц
 Синтаксис:
@@ -100,22 +89,13 @@ create_table users
 list_tables
 
 Описание:
-Показывает список всех созданных таблиц с их структурой (названия столбцов и типы).
+Показывает список всех созданных таблиц с их структурой.
 
-Примеры:
-
-list_tables
-
-Результат:
+Пример результата:
 
 Список таблиц:
-  users: ['ID:int', 'name:str', 'age:int']
+  users: ['ID:int', 'name:str', 'age:int', 'active:bool']
   products: ['ID:int', 'title:str', 'price:int', 'available:bool']
-  orders: ['ID:int', 'user_id:int', 'product_id:int', 'quantity:int']
-
-Если таблиц нет:
-
-Нет таблиц
 
 3. drop_table — Удаление таблицы
 Синтаксис:
@@ -123,32 +103,127 @@ list_tables
 drop_table <имя_таблицы>
 
 Описание:
-Удаляет указанную таблицу из базы данных. Операция необратима!
+Удаляет указанную таблицу и все её данные из базы данных. Операция необратима!
 
-Примеры:
+Пример:
 
-# Удалить таблицу users
 drop_table users
-# Удалить таблицу products
-drop_table products
 
-Успешный результат:
+Результат:
 
 Таблица "users" удалена
 
-Ошибки:
+4. insert — Добавление записи
+Синтаксис:
 
-Таблица не существует:
-drop_table nonexistent
-Ошибка: таблица "nonexistent" не существует
+insert into <таблица> values (<значение1>, <значение2>, ...)
 
-Не указано имя таблицы:
+Описание:
+Добавляет новую запись в таблицу. ID назначается автоматически.
 
-drop_table
-Ошибка: укажите имя таблицы
-Использование: drop_table <имя>
+Примеры:
 
-4. help — Справка
+insert into users values ("Sergei", 28, true)
+insert into users values ("Anna", 25, false)
+insert into products values ("Laptop", 50000, true)
+
+Результат:
+
+Запись с ID=1 успешно добавлена в таблицу "users".
+
+Типы значений:
+
+Строки в кавычках: "Sergei", "Anna"
+Числа без кавычек: 28, 25
+Булевы значения: true, false
+5. select — Выборка записей
+Синтаксис:
+
+select from <таблица> [where <столбец> = <значение>]
+
+Описание:
+Выбирает записи из таблицы. Можно использовать с условием WHERE или без него.
+
+Примеры:
+
+Выбрать все записи:
+
+select from users
+
+Результат:
+
+{'ID': 1, 'name': 'Sergei', 'age': 28, 'active': True}
+{'ID': 2, 'name': 'Anna', 'age': 25, 'active': False}
+
+Выбрать с условием:
+
+select from users where active = true
+select from users where name = Sergei
+select from users where age = 28
+
+Результат:
+
+{'ID': 1, 'name': 'Sergei', 'age': 28, 'active': True}
+
+Если записей нет:
+
+Записей не найдено.
+
+6. update — Обновление записей
+Синтаксис:
+
+update <таблица> set <столбец> = <значение> [where <столбец> = <значение>]
+
+Описание:
+Обновляет значения в записях. Можно обновить все записи или только те, что соответствуют условию WHERE.
+
+Примеры:
+
+Обновить с условием:
+
+update users set age = 29 where name = Sergei
+update users set active = false where age = 25
+
+Результат:
+
+Обновлено записей: 1
+
+Обновить все записи:
+
+update users set active = true
+
+Результат:
+
+Обновлено записей: 3
+
+7. delete — Удаление записей
+Синтаксис:
+
+delete from <таблица> [where <столбец> = <значение>]
+
+Описание:
+Удаляет записи из таблицы. Можно удалить все записи или только те, что соответствуют условию WHERE.
+
+Примеры:
+
+Удалить с условием:
+
+delete from users where name = Anna
+delete from users where age = 25
+
+Результат:
+
+Удалено записей: 1
+
+Удалить все записи:
+
+delete from users
+
+Результат:
+
+Удалено записей: 3
+
+8. help — Справка
 Синтаксис:
 
 help
@@ -156,18 +231,7 @@ help
 Описание:
 Показывает справочную информацию по всем доступным командам.
 
-Результат:
-
-***Процесс работы с таблицей***
-Функции:
-<command> create_table <имя_таблицы> <столбец1:тип> .. - создать таблицу
-<command> list_tables - показать список всех таблиц
-<command> drop_table <имя_таблицы> - удалить таблицу
-Общие команды:
-<command> exit - выход из программы
-<command> help - справочная информация
-
-5. exit — Выход
+9. exit — Выход
 Синтаксис:
 
 exit
@@ -175,41 +239,35 @@ exit
 Описание:
 Завершает работу с базой данных и выходит из программы.
 
-Результат:
-
-Выход из программы...
-
-Полный пример работы
+Полный пример работы (CRUD операции)
 $ make run
 ***
 Добро пожаловать в Primitive DB!
 Введите 'help' для справки
-Введите команду: create_table users name:str age:int
+Введите команду: create_table users name:str age:int active:bool
 Таблица "users" создана
-Введите команду: create_table products title:str price:int available:bool
-Таблица "products" создана
-Введите команду: list_tables
-Список таблиц:
-  users: ['ID:int', 'name:str', 'age:int']
-  products: ['ID:int', 'title:str', 'price:int', 'available:bool']
-Введите команду: create_table users email:str
-Ошибка: таблица "users" уже существует
-Введите команду: drop_table products
-Таблица "products" удалена
-Введите команду: list_tables
-Список таблиц:
-  users: ['ID:int', 'name:str', 'age:int']
-Введите команду: drop_table nonexistent
-Ошибка: таблица "nonexistent" не существует
-Введите команду: help
-***Процесс работы с таблицей***
-Функции:
-<command> create_table <имя_таблицы> <столбец1:тип> .. - создать таблицу
-<command> list_tables - показать список всех таблиц
-<command> drop_table <имя_таблицы> - удалить таблицу
-Общие команды:
-<command> exit - выход из программы
-<command> help - справочная информация
+Введите команду: insert into users values ("Sergei", 28, true)
+Запись с ID=1 успешно добавлена в таблицу "users".
+Введите команду: insert into users values ("Anna", 25, false)
+Запись с ID=2 успешно добавлена в таблицу "users".
+Введите команду: insert into users values ("Ivan", 30, true)
+Запись с ID=3 успешно добавлена в таблицу "users".
+Введите команду: select from users
+{'ID': 1, 'name': 'Sergei', 'age': 28, 'active': True}
+{'ID': 2, 'name': 'Anna', 'age': 25, 'active': False}
+{'ID': 3, 'name': 'Ivan', 'age': 30, 'active': True}
+Введите команду: select from users where active = true
+{'ID': 1, 'name': 'Sergei', 'age': 28, 'active': True}
+{'ID': 3, 'name': 'Ivan', 'age': 30, 'active': True}
+Введите команду: update users set age = 29 where name = Sergei
+Обновлено записей: 1
+Введите команду: select from users where name = Sergei
+{'ID': 1, 'name': 'Sergei', 'age': 29, 'active': True}
+Введите команду: delete from users where name = Anna
+Удалено записей: 1
+Введите команду: select from users
+{'ID': 1, 'name': 'Sergei', 'age': 29, 'active': True}
+{'ID': 3, 'name': 'Ivan', 'age': 30, 'active': True}
 Введите команду: exit
 Выход из программы...
 
@@ -234,9 +292,12 @@ project-2_kolesnik_matvey_m25-555/
 │   └── primitive_db/
 │       ├── __init__.py      # Инициализация пакета
 │       ├── main.py          # Точка входа
-│       ├── engine.py        # Игровой цикл и обработка команд
-│       ├── core.py          # Логика создания/удаления таблиц
+│       ├── engine.py        # Главный цикл и обработка команд
+│       ├── core.py          # CRUD операции и валидация
+│       ├── parser.py        # Парсинг SQL-подобных команд
 │       └── utils.py         # Работа с JSON (загрузка/сохранение)
+├── data/                    # Директория с данными таблиц (создаётся автоматически)
+│   └── *.json              # Файлы данных для каждой таблицы
 ├── pyproject.toml           # Конфигурация Poetry
 ├── Makefile                 # Автоматизация команд
 ├── README.md                # Документация
@@ -244,19 +305,35 @@ project-2_kolesnik_matvey_m25-555/
 └── db_meta.json             # Файл метаданных (создаётся автоматически)
 
 Описание модулей
-utils.py — функции для загрузки и сохранения JSON-метаданных (load_metadata, save_metadata)
-core.py — бизнес-логика создания и удаления таблиц (create_table, drop_table)
-engine.py — интерактивный цикл, парсинг команд с помощью shlex, обработка пользовательского ввода
+utils.py — функции для загрузки и сохранения JSON-данных (load_metadata, save_metadata, load_table_data, save_table_data)
+core.py — бизнес-логика CRUD операций (create_table, drop_table, insert, select, update, delete, validate_value)
+parser.py — парсинг SQL-подобных команд (parse_values, parse_where_clause, parse_set_clause)
+engine.py — интерактивный цикл, обработка пользовательского ввода с помощью match case
 main.py — точка входа в приложение
 Технологии
 Python 3.10+ — язык программирования
 Poetry — управление зависимостями и сборка пакета
 prompt — библиотека для интерактивного ввода данных
 shlex — парсинг командной строки с поддержкой кавычек
-json — хранение метаданных таблиц
+json — хранение метаданных и данных таблиц
+os — работа с файловой системой
+Возможности
+Cоздание таблиц с типизированными столбцами
+Удаление таблиц вместе с данными
+Добавление записей с автоматическим ID
+Выборка записей (все или по условию WHERE)
+Обновление записей (все или по условию WHERE)
+Удаление записей (все или по условию WHERE)
+Валидация типов данных (int, str, bool)
+Персистентность данных в JSON файлах
+SQL-подобный синтаксис команд
 
-Демонстрация
-https://asciinema.org/connect/5d8eff4f-cd97-42cd-9343-55f0d1ca1c65
+Демострация
+
+[![asciicast](https://asciinema.org/a/oNiXAXIqtcLWYLJLiPbT1DTqH)]
+
+*Полная демонстрация всех CRUD операций Primitive DB*
+
 Автор
 Колесник Матвей, группа М25-555
 

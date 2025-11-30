@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Точка входа для Primitive DB."""
 
-from src.primitive_db.engine import run
+from .engine import run
 
 
 def main():

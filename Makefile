@@ -2,7 +2,7 @@ install:
 	poetry install
 
 project:
-	poetry run project
+	poetry run python -m src.primitive_db.main
 
 build:
 	poetry build
@@ -15,9 +15,6 @@ package-install:
 
 prompt:
 	poetry add prompt
-
-run:
-	poetry run python -m src.primitive_db.main
 
 lint:
 	poetry run ruff check
