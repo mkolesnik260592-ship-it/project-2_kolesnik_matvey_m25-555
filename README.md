@@ -330,7 +330,7 @@ SQL-подобный синтаксис команд
 
 Демострация
 
-[![asciicast](https://asciinema.org/a/oNiXAXIqtcLWYLJLiPbT1DTqH)]
+[![asciicast](https://asciinema.org/a/uPyqvnmJ5B8kyOh4dbCFEvD6h)]
 
 *Полная демонстрация всех CRUD операций Primitive DB*
 
