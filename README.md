@@ -108,7 +108,7 @@ Python 3.10+, Poetry, prompt, PrettyTable, shlex, json
 
 Демонстрация
 
-https://asciinema.org/a/qlnzHXLfj5IQpu4DKXfsgqrAr
+https://asciinema.org/a/yaW8Dw8lDd5369aMmH4MP6dEa
 
 Автор
 Колесник Матвей, М25-555
