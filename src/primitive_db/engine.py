@@ -4,6 +4,7 @@ import shlex
 import prompt  # type: ignore
 from prettytable import PrettyTable  # type: ignore
 
+from .constants import METADATA_FILE, MSG_EXIT, MSG_WELCOME
 from .core import create_table, drop_table
 from .decorators import create_cacher
 from .utils import load_metadata, save_metadata
@@ -12,11 +13,7 @@ query_cache = create_cacher()
 
 def run():
     """Главный игровой цикл"""
-    print("***")
-    print("Добро пожаловать в Primitive DB!")
-    print("Введите 'help' для справки\n")
-
-    METADATA_FILE = "db_meta.json"
+    print(MSG_WELCOME)
 
     while True:
         metadata = load_metadata(METADATA_FILE)
@@ -28,7 +25,7 @@ def run():
 
         match command:
             case 'exit':
-                print("Выход из программы...")
+                print(MSG_EXIT)
                 break
             case 'help':
                 print_help()

@@ -1,5 +1,6 @@
 import os
 
+from .constants import DATA_DIR, VALID_TYPES
 from .decorators import confirm_action, handle_db_errors, log_time
 
 
@@ -17,7 +18,7 @@ def create_table(metadata, table_name, columns):
         parts = column.split(":")
         column_type = parts[1]
 
-        if column_type not in ['int', 'str', 'bool']:
+        if column_type not in VALID_TYPES:
             print(f'Ошибка: недопустимый тип "{column_type}"')
             return metadata
 
@@ -34,7 +35,7 @@ def drop_table(metadata, table_name):
         return metadata
 
     metadata.pop(table_name)
-    data_file = f'data/{table_name}.json'
+    data_file = f'{DATA_DIR}/{table_name}.json'
     if os.path.exists(data_file):
         os.remove(data_file)
     return metadata

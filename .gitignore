@@ -1,4 +1,12 @@
 .venv/
+venv/
 dist/
 *.egg-info/
 test_env/
+__pycache__/
+*.pyc
+*.swp
+db_meta.json
+data/
+.ruff_cache/
+*.cast
