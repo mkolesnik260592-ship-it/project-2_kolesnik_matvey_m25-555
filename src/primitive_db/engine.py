@@ -1,9 +1,14 @@
 """Движок для работы с Primitive DB."""
 import shlex
-import prompt  # noqa
-from prettytable import PrettyTable
-from .utils import load_metadata, save_metadata
+
+import prompt  # type: ignore
+from prettytable import PrettyTable  # type: ignore
+
 from .core import create_table, drop_table
+from .decorators import create_cacher
+from .utils import load_metadata, save_metadata
+
+query_cache = create_cacher()
 
 def run():
     """Главный игровой цикл"""
@@ -46,8 +51,9 @@ def run():
                     table_name = args[1]
                     if table_name in metadata:
                         metadata = drop_table(metadata, table_name)
-                        save_metadata(METADATA_FILE, metadata)
-                        print(f'Таблица "{table_name}" удалена')
+                        if table_name not in metadata:
+                            save_metadata(METADATA_FILE, metadata)
+                            print(f'Таблица "{table_name}" удалена')
                     else:
                         print(f'Ошибка: таблица "{table_name}" не существует')
             case 'list_tables':
@@ -95,22 +101,24 @@ def run():
                     from .parser import parse_where_clause
                     where_clause = parse_where_clause(where_string)
 
-                from .utils import load_table_data
-                table_data = load_table_data(table_name)
+                if where_clause:
+                    cache_key = f'{table_name}_{where_clause}'
+                else:
+                    cache_key = f'{table_name}_all'
 
-                from .core import select
-                result = select(table_data, where_clause)
+                def get_data():
+                    from .utils import load_table_data
+                    table_data = load_table_data(table_name)
+
+                    from .core import select
+                    return select(table_data, where_clause)
+                result = query_cache(cache_key, get_data)
 
                 if result:
-
                     table = PrettyTable()
-
-                    if result:
-                        table.field_names = list(result[0].keys())
-
-                        for record in result:
-                            table.add_row(list(record.values()))
-
+                    table.field_names = list(result[0].keys())
+                    for record in result:
+                        table.add_row(list(record.values()))
                     print(table)
                 else:
                     print('Записей не найдено.')
@@ -139,7 +147,9 @@ def run():
 
                 from .parser import parse_set_clause, parse_where_clause
                 set_clause = parse_set_clause(set_string)
-                where_clause = parse_where_clause(where_string) if where_string else None
+                where_clause = (
+                    parse_where_clause(where_string) if where_string else None
+                )
 
                 from .utils import load_table_data, save_table_data
                 table_data = load_table_data(table_name)

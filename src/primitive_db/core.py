@@ -1,6 +1,9 @@
 import os
 
+from .decorators import confirm_action, handle_db_errors, log_time
 
+
+@handle_db_errors
 def create_table(metadata, table_name, columns):
     """ Создание таблицы """
 
@@ -21,7 +24,8 @@ def create_table(metadata, table_name, columns):
     metadata[table_name] = {"columns": columns}
     return metadata
 
-
+@handle_db_errors
+@confirm_action("удаление таблицы")
 def drop_table(metadata, table_name):
     """ Удаление таблицы """
 
@@ -55,7 +59,8 @@ def validate_value(value, expected_type):
             return None
     return None
 
-
+@handle_db_errors
+@log_time
 def insert(metadata, table_name, values, table_data):
     """Добавление записи в таблицу"""
 
@@ -65,7 +70,8 @@ def insert(metadata, table_name, values, table_data):
     columns = metadata[table_name]['columns']
 
     if len(values) != len(columns) - 1:
-        print(f'Ошибка: ожидается {len(columns) - 1} значений, а получено {len(values)}.')
+        expected = len(columns) - 1
+        print(f'Ошибка: ожидается {expected} значений, а получено {len(values)}.')
         return table_data
 
     if table_data:
@@ -79,7 +85,7 @@ def insert(metadata, table_name, values, table_data):
         column_name, column_type = column_def.split(':')
         validated_value = validate_value(value, column_type)
         if validated_value is None:
-            print(f'Ошибка: неверный тип...')
+            print('Ошибка: неверный тип...')
             return table_data
         new_record[column_name] = validated_value
 
@@ -89,7 +95,8 @@ def insert(metadata, table_name, values, table_data):
 
     return table_data
 
-
+@handle_db_errors
+@log_time
 def select(table_data, where_clause):
     """Выборка записей из таблицы"""
 
@@ -106,7 +113,7 @@ def select(table_data, where_clause):
             result.append(record)
     return result
 
-
+@handle_db_errors
 def update(table_data, set_clause, where_clause):
     """Обновление записей в таблице"""
 
@@ -144,6 +151,8 @@ def update(table_data, set_clause, where_clause):
 
     return table_data
 
+@handle_db_errors
+@confirm_action("удаление записи")
 def delete(table_data, where_clause):
     """Удаление записей из таблицы"""
 
